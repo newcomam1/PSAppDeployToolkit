@@ -106,7 +106,7 @@ Try {
     ##*===============================================
     ##* VARIABLE DECLARATION
     ##*===============================================
-    ## Variables: Application
+    ## TODO Variables: Application
     [String]$appVendor = ''
     [String]$appName = ''
     [String]$appVersion = ''
@@ -181,8 +181,35 @@ Try {
         ##*===============================================
         [String]$installPhase = 'Pre-Installation'
 
-        ## Show Welcome Message, close Internet Explorer if required, allow up to 3 deferrals, verify there is enough disk space to complete the install, and persist the prompt
+        ## TODO Show Welcome Message, close Internet Explorer if required, allow up to 3 deferrals, verify there is enough disk space to complete the install, and persist the prompt
         Show-InstallationWelcome -CloseApps 'iexplore' -AllowDefer -DeferTimes 3 -CheckDiskSpace -PersistPrompt
+        ## EXAMPLES ##
+        ## $CheckAGENTFile1 = "$envProgramFiles\iManage\AgentServices\iManageStayExec.exe"
+        ## $CheckAGENTFileVer1 = ""
+        ## $AgentVersion_we_require = [version]"10.9.0.23"		
+
+        ## if(test-path $CheckAGENTFile1) { 
+            ##Show-InstallationProgress -StatusMessage "Removing Previous Version(s) of iManage Agent Services..."
+            ##$CheckAGENTFileVer1 = GET-FILEVERSION -File $CheckAGENTFile1
+            ##$AGENTVersion_we_require = [version]"10.8.0.4"
+            ##if(($CheckAGENTFileVer1) -eq $AGENTVersion_we_require) {
+            ##    Execute-MSI -Action Uninstall -Path '{DBF323BA-D23F-4994-A43A-88F4C65F4369}'
+            ##}
+            ##$AGENTVersion_we_require = [version]"10.9.0.23"
+            ##if(($CheckAGENTFileVer1) -eq $AGENTVersion_we_require) {
+            ##    Execute-Process -Path "$dirFiles\Work10Files\iManageAgentServices.exe" -Parameters "/uninstall /quiet" -WindowStyle Hidden -continueonerror $true -IgnoreExitCodes *
+            ##}
+        ##}
+        ##$install_params = "/uninstall /passive /norestart"
+        ##$install_params = "/uninstall /quiet /norestart"
+        ##$file1 = 'iManageWorkDesktopForWindows.exe'
+        ##Get-ChildItem –Path 'C:\ProgramData\Package Cache' -Recurse -Filter $file1 |
+
+        ##Foreach-Object {
+        ##    #Do something with $_.FullName
+        ##    Write-Host $_.FullName
+        ##    Start-Process -Wait -FilePath $_.FullName -ArgumentList $install_params -RedirectStandardError "c:\temp\example-output.txt" 
+        ##}
 
         ## Show Progress Message (with the default message)
         Show-InstallationProgress
@@ -191,9 +218,30 @@ Try {
 
 
         ##*===============================================
-        ##* INSTALLATION
+        ##* TODO INSTALLATION
         ##*===============================================
         [String]$installPhase = 'Installation'
+
+        ## EXAMPLE COPY PRE-INSTALL FILES FOR CONFIG PRIOR TO MAIN INSTALL
+        ##$ProfilePaths = Get-UserProfiles | Select-Object -ExpandProperty 'ProfilePath'
+        ##ForEach ($Profile in $ProfilePaths) {
+        ##    Copy-File -Path "$dirfiles\Work10Files\Customs\iManWork.config" -Destination "$Profile\APPDATA\Roaming\IMANAGE\WORK\CONFIGS\USER\"
+        ##    Copy-File -Path "$dirfiles\Work10Files\Customs\iManWork.config" -Destination "$Profile\APPDATA\Roaming\IMANAGE\WORK\CONFIGS\"
+        ##    Copy-File -Path "$dirfiles\Work10Files\Customs\imEMM.config" -Destination "$Profile\APPDATA\Roaming\IMANAGE\WORK\CONFIGS\"
+        ##    Copy-File -Path "$dirfiles\Work10Files\Customs\imWorkOptions.xml" -Destination "$Profile\APPDATA\Roaming\IMANAGE\WORK\CONFIGS\USER\"
+        ##}
+
+        ## EXAMPLE MESSAGE USER 
+        ##Show-InstallationProgress -StatusMessage "Installing iManage Agent Services $Agent_Ver..."
+        ## TODO  Show-InstallationWelcome -CloseApps 'WESCLIENT=iManage Search,THINCLIENT=iManage Desksite,OUTLOOK=MS Outlook,WINWORD=MS Word,EXCEL=MS Excel,POWERPNT=MS PowerPoint,ADOBERD32=Adobe Reader,ACRORD32=Adobe Reader,ACROBAT=Adobe Acrobat' -FORCECLOSEAPPSCOUNTDOWN 3600 -PersistPrompt -MinimizeWindows $false
+        ## EXAMPLE RUN INSTALL .EXE
+        ##Execute-Process -Path "$dirFiles\Work10Files\iManageAgentServices.exe" -Parameters "/silent /AUTO_UPDATE=0" -WindowStyle Hidden -continueonerror $true -IgnoreExitCodes *
+        ##Start-Process -Wait -filepath "$envSystem32Directory\taskkill.exe" -ArgumentList "/F /IM iManageStayExec.exe"  -WindowStyle Hidden
+        ##Stop-ServiceAndDependencies -Name 'iwAgentWebService'
+        ##Stop-ServiceAndDependencies -Name 'imUpdateManagerService'
+
+
+
 
         ## Handle Zero-Config MSI Installations
         If ($useDefaultMsi) {
@@ -209,16 +257,126 @@ Try {
 
 
         ##*===============================================
-        ##* POST-INSTALLATION
+        ## TODO POST-INSTALLATION
         ##*===============================================
         [String]$installPhase = 'Post-Installation'
 
         ## <Perform Post-Installation tasks here>
+        ## EXAMPLE POST CONFIG FILES
+		# COPY CONFIG FILES
+		#--------------------------------------------------------------------------------------------
+		#        
+		# C:\ProgramData\iManage\AgentServices\CentralizedConfigs
+		## ***To copy and overwrite a file***
+		#$CheckDIR1 = "$envProgramData\iManage\AgentServices\CentralizedConfigs"
+		#$CheckFile1 = "$CheckDir1\UpdateManagerConfiguration.xml"
+		#if(!(test-path $CheckDIR1))
+		#{ 
+		#	Write-Host "Creating $CheckDir1"
+		#	new-item $CheckDir1 -itemtype directory
+		#}
+		#Copy-File -Path "$dirfiles\Work10Files\Customs\UpdateManagerConfiguration.xml" -Destination "$checkFile1" 
+		## %DESTFOLDER%\UpdateManagerConfiguration.xml
+		##C:\ProgramData\iManage\AgentServices\Configs
+		#$CheckDIR1 = "$envProgramData\iManage\AgentServices\Configs"
+		#$CheckFile1 = "$CheckDir1\UpdateManagerConfiguration.xml"
+		#if(!(test-path $CheckDIR1))
+		#{ 
+		#	Write-Host "Creating $CheckDir1"
+		#	new-item $CheckDir1 -itemtype directory
+		#}
+		#Copy-File -Path "$dirfiles\Work10Files\Customs\UpdateManagerConfiguration.xml" -Destination "$checkFile1" 
+		#
+        ## EXAMPLE POST CONFIG REG FILES
+		# APPLY MACHINE REGISTRY FILES HKCR / HKLM 
+		## HKCR_NRL_SHELL_OPEN_EDIT.reg
+		#$installDir1 = "$dirfiles\Work10Files\Customs"
+		#Execute-Process -FilePath "reg.exe" -Parameters "IMPORT `"$installDir1\HKCR_NRL_SHELL_OPEN_EDIT.reg`"" -PassThru -ContinueOnError $true
+
+        ## EXAMPLE POST CONFIG REG FILES
+        # APPLY USER REGISTRY FILES HKCU AND ALL USER HIVES IN HKEY_USERS
+		## REGISTRY - USER MODIFICATIONS
+		## ***To set an HKCU key for all users including default profile***
+    	#Show-InstallationProgress -StatusMessage "Applying User Customisations..."
+		#[scriptblock]$HKCURegistrySettings = {
+			#Set-RegistryKey -Key 'HKCU\SOFTWARE\iManage\Work\10.0\ADFS' -Name 'TokenCaching' -Value 1 -Type DWord -SID $UserProfile.SID -ContinueOnError:$True
+			#Remove-RegistryKey -Key 'HKCU:SOFTWARE\iManage\Work\10.0\EMM\Preferences' -Name 'PreviewPlace'
+			#Set-RegistryKey -Key 'HKCU\SOFTWARE\Legal Tech\DMS Footer' -Name 'DatabaseText' 'Comcast'-Type String -SID $UserProfile.SID
+			#Remove-RegistryKey -Key 'HKCU:SOFTWARE\iManage\Work\10.0\Client\Login' -Name 'EnableChromiumBrowser'
+		#}
+		#Invoke-HKCURegistrySettingsForAllUsers -RegistrySettings $HKCURegistrySettings
+
+		## EXAMPLE COPY A POST CONFIG FILE
+		## Copy a file to the correct relative location for all user accounts
+		#$ProfilePaths = Get-UserProfiles | Select-Object -ExpandProperty 'ProfilePath'
+		#ForEach ($Profile in $ProfilePaths) {
+			#Copy-File -Path "$dirfiles\Work10Files\Customs\iManWork.config" -Destination "$Profile\APPDATA\Roaming\IMANAGE\WORK\CONFIGS\USER\"
+		#}
+        ## EXAMPLE KILL A PROCESS
+		#Start-Process -Wait -filepath "$envSystem32Directory\taskkill.exe" -ArgumentList "/F /IM iwagent.exe"  -WindowStyle Hidden
+
 
         ## Display a message at the end of the install
-        If (-not $useDefaultMsi) {
-            Show-InstallationPrompt -Message 'You can customize text to appear at the end of an install or remove it completely for unattended installations.' -ButtonRightText 'OK' -Icon Information -NoWait
-        }
+        ## EXAMPLE VERIFY PRODUCT HAS INSTALLED
+		#$CheckCLIENTFile1 = "$envProgramFiles\iManage\Work10\109.1.14\iwlnrl.exe"
+		#$CheckCLIENTFileVer1 = ""
+		#$ClientVersion_we_require = [version]"10.9.1.14"
+		#$CheckClientResult = ""
+		##*===============================================
+		## TODO CHECK FOR WORK 10 DESKTOP
+		##*===============================================
+		#if(test-path $CheckCLIENTFile1) { 
+		#	$CheckCLIENTFileVer1 = GET-FILEVERSION -File $CheckCLIENTFile1
+        #   $CLIENTInstall = $TRUE
+        #}
+		#ELSE {
+		#	$CLIENTInstall = $FALSE
+		#}
+		#Write-Log -Source $deployAppScriptFriendlyName -Message "CLIENT= $CHECKInstall"
+
+        #If ($AGENTINSTALL -And $CLIENTINSTALL) {
+        #    $APPCHECKER = "VERIFIED"
+        #}
+
+        ##*===============================================
+		##* POST-INSTALLATION
+		##*===============================================
+		[string]$installPhase = 'Post-Installation'
+
+		## TODO EXAMPLE WRITE INSTALLATION TATTOO IN REGISTRY
+        
+		#If ($APPCHECK = "VERIFIED") { 
+		#    $CheckForReg = 'HKLM:SOFTWARE\Comcast Legal\DMS'
+		#    if (test-path $CheckForReg) { 
+		#	    Write-Host "Found $CheckForReg"
+		#	    Remove-RegistryKey -Key 'HKLM:SOFTWARE\Comcast Legal\DMS' -recurse -ErrorAction SilentlyContinue
+    	#	}
+    	#	$CheckForReg = 'HKLM:SOFTWARE\Comcast Legal\LegalTechOpsDMSRemoval'
+		 #   if (test-path $CheckForReg) { 
+		#	    Write-Host "Found $CheckForReg"
+		#	    Remove-RegistryKey -Key 'HKLM:SOFTWARE\Comcast Legal\LegalTechOpsDMSRemoval' -recurse -ErrorAction SilentlyContinue
+    	#	}
+        #   [datetime]$InstallDateTime = Get-Date
+        #  Set-RegistryKey -Key 'HKEY_LOCAL_MACHINE\SOFTWARE\Comcast Legal\DMS' -Name 'APP_NAME' -Value $appname -Type String
+        #   Set-RegistryKey -Key 'HKEY_LOCAL_MACHINE\SOFTWARE\Comcast Legal\DMS' -Name 'INSTALL_TYPE' -Value $installTitle -Type String
+        #   Set-RegistryKey -Key 'HKEY_LOCAL_MACHINE\SOFTWARE\Comcast Legal\DMS' -Name 'AGENT_VER' -Value $checkAgentFileVer1 -Type String
+        #   Set-RegistryKey -Key 'HKEY_LOCAL_MACHINE\SOFTWARE\Comcast Legal\DMS' -Name 'APP_VER' -Value $checkClientFileVer1 -Type String
+        #    Set-RegistryKey -Key 'HKEY_LOCAL_MACHINE\SOFTWARE\Comcast Legal\DMS' -Name 'INSTALLDATE' -Value $InstallDateTime -Type String
+        #    Set-RegistryKey -Key 'HKEY_LOCAL_MACHINE\SOFTWARE\Comcast Legal\DMS' -Name 'LOCATION' -Value "CLOUD" -Type String
+        #    Set-RegistryKey -Key 'HKEY_LOCAL_MACHINE\SOFTWARE\Comcast Legal\DMS' -Name 'PACKAGE_VERSION' -Value $appRevision -Type String
+        #    Set-RegistryKey -Key 'HKEY_LOCAL_MACHINE\SOFTWARE\Comcast Legal\DMS' -Name 'WORK_VER' -Value $WORK_VER -Type String
+        #    Set-RegistryKey -Key 'HKEY_LOCAL_MACHINE\SOFTWARE\Comcast Legal\DMS' -Name 'INSTALL_MODE' -Value $DeployMode -Type String
+		#	Set-RegistryKey -Key 'HKEY_LOCAL_MACHINE\SOFTWARE\Comcast Legal\DMS' -Name 'WORKSHARE_DETECTED' -Value $WorkshareVersionCheck -Type String
+        #    
+		#	#Show-InstallationPrompt -Message 'Installation has been verified...' -ButtonRightText 'OK' -Icon Information -NoWait 
+		#	Show-InstallationProgress -StatusMessage "Installation has completed Successfully ..."
+		#	Start-Sleep -Seconds 2
+		#	[int32]$mainExitCode = 0
+		#}
+		#ELSE { 
+		#	Show-InstallationPrompt -Message 'Some items failed to install - please report to Legal Tech Operations.' -ButtonRightText 'OK' -Icon Information -NoWait 
+		#	[int32]$mainExitCode = 60001
+		#}        
     }
     ElseIf ($deploymentType -ieq 'Uninstall') {
         ##*===============================================
@@ -226,13 +384,69 @@ Try {
         ##*===============================================
         [String]$installPhase = 'Pre-Uninstallation'
 
-        ## Show Welcome Message, close Internet Explorer with a 60 second countdown before automatically closing
+        ## TODO Show Welcome Message, close Internet Explorer with a 60 second countdown before automatically closing
         Show-InstallationWelcome -CloseApps 'iexplore' -CloseAppsCountdown 60
 
         ## Show Progress Message (with the default message)
         Show-InstallationProgress
 
         ## <Perform Pre-Uninstallation tasks here>
+		##*===============================================
+		## TODO REMOVE / UNINSTALL FOR IMANAGE WORK AGENT
+		##*===============================================
+        ## EXAMPLES ##
+        ## $CheckAGENTFile1 = "$envProgramFiles\iManage\AgentServices\iManageStayExec.exe"
+        ## $CheckAGENTFileVer1 = ""
+        ## $AgentVersion_we_require = [version]"10.9.0.23"		
+
+        ## if(test-path $CheckAGENTFile1) { 
+            ##Show-InstallationProgress -StatusMessage "Removing Previous Version(s) of iManage Agent Services..."
+            ##$CheckAGENTFileVer1 = GET-FILEVERSION -File $CheckAGENTFile1
+            ##$AGENTVersion_we_require = [version]"10.8.0.4"
+            ##if(($CheckAGENTFileVer1) -eq $AGENTVersion_we_require) {
+            ##    Execute-MSI -Action Uninstall -Path '{DBF323BA-D23F-4994-A43A-88F4C65F4369}'
+            ##}
+            ##$AGENTVersion_we_require = [version]"10.9.0.23"
+            ##if(($CheckAGENTFileVer1) -eq $AGENTVersion_we_require) {
+            ##    Execute-Process -Path "$dirFiles\Work10Files\iManageAgentServices.exe" -Parameters "/uninstall /quiet" -WindowStyle Hidden -continueonerror $true -IgnoreExitCodes *
+            ##}
+        ##}
+        ##$install_params = "/uninstall /passive /norestart"
+        ##$install_params = "/uninstall /quiet /norestart"
+        ##$file1 = 'iManageWorkDesktopForWindows.exe'
+        ##Get-ChildItem –Path 'C:\ProgramData\Package Cache' -Recurse -Filter $file1 |
+
+        ##Foreach-Object {
+        ##    #Do something with $_.FullName
+        ##    Write-Host $_.FullName
+        ##    Start-Process -Wait -FilePath $_.FullName -ArgumentList $install_params -RedirectStandardError "c:\temp\example-output.txt" 
+        ##}
+
+        #Show-InstallationProgress -StatusMessage "Verifying uninstallation..."
+
+   		$APPCHECKER = "NULL"
+		$CheckCLIENTFile1 = "$envProgramFiles\iManage\Work10\109.1.14\iwlnrl.exe"
+		$CheckCLIENTFileVer1 = ""
+		$ClientVersion_we_require = [version]"10.9.1.14"
+		$ClientInstall = $TRUE
+		$CheckClientResult = ""
+
+		##*===============================================
+		##* CHECK FOR WORK 10 DESKTOP
+		##*===============================================
+		#if(test-path $CheckCLIENTFile1) { 
+		#	$CheckCLIENTFileVer1 = GET-FILEVERSION -File $CheckCLIENTFile1
+        #    $CLIENTInstall = $TRUE
+        #}
+		#ELSE {
+		#	$CLIENTInstall = $FALSE
+		#}	
+		#Write-Log -Source $deployAppScriptFriendlyName -Message "CLIENT= $CHECKInstall"
+
+        #If (-not(test-path $CheckCLIENTFile1)) {
+        #    $APPCHECKER = "UNINSTALLED"
+        #}
+
 
 
         ##*===============================================
@@ -255,7 +469,14 @@ Try {
         ##* POST-UNINSTALLATION
         ##*===============================================
         [String]$installPhase = 'Post-Uninstallation'
-
+        ## TODO REMOVE APP TATTOO #If ($APPCHECK = "UNINSTALLED") { 
+		#$CheckForReg = 'HKLM:SOFTWARE\Comcast Legal\DMS'
+		#if (test-path $CheckForReg) { 
+		#	Write-Host "Found $CheckForReg"
+		#	Remove-RegistryKey -Key 'HKLM:SOFTWARE\Comcast Legal\DMS' -recurse -ErrorAction SilentlyContinue
+        #    Show-InstallationProgress -StatusMessage "Uninstall Successful..."
+        #    Start-Sleep -Seconds 1
+    	#}
         ## <Perform Post-Uninstallation tasks here>
 
 
@@ -275,7 +496,7 @@ Try {
         ## <Perform Pre-Repair tasks here>
 
         ##*===============================================
-        ##* REPAIR
+        ## TODO REPAIR
         ##*===============================================
         [String]$installPhase = 'Repair'
 

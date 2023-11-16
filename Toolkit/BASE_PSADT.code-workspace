@@ -1,0 +1,32 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"terminal.integrated.profiles.windows": {
+			"PowerShell": {
+				"source": "PowerShell",
+				"icon": "terminal-powershell"
+			},
+			"Powershell Bypass": {
+				"path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+				"source": "PowerShell",
+				"args": [
+					"-NoLogo",
+					"-NoExit",
+					"-ExecutionPolicy",
+					"Unrestricted"
+				]
+			},
+			"Command Prompt": null,
+			"Git Bash": null
+		},
+		"terminal.integrated.defaultProfile.windows": "PowerShell",
+		"files.defaultLanguage": "PowerShell",
+		"terminal.integrated.enablePersistentSessions": false,
+		"terminal.integrated.persistentSessionReviveProcess": "never",
+		"powershell.scriptAnalysis.settingsPath": ".vscode\\PSScriptAnalyzerSettings.psd1"
+	}
+}
